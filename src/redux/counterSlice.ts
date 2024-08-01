@@ -1,25 +1,49 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 export type CounterState = {
   count: number;
 };
 
 export const initialState: CounterState = {
-  count: 0
-}
+  count: 0,
+};
+
+export const incrementAsync = createAsyncThunk(
+  "counter/incrementAsync", async() => {
+    return new Promise<{value: number}>((resolve) => {
+      setTimeout(() => {
+        resolve({value: 1});
+      }, 1000);
+      
+    })
+  }
+)
+
+export const decrementAsync = createAsyncThunk(
+  "counter/decrementAsync", async() => {
+    return new Promise<{value: number}>((resolve) => {
+      setTimeout(() => {
+        resolve({value: 1});
+      }, 1000);
+      
+    })
+  }
+)
 
 const counterSlice = createSlice({
   name: "counter",
   initialState,
-  reducers: {
-    increment: (state) => {
-      state.count += 1
-    },
-    decrement: (state) => {
-      state.count -= 1
-    }
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(incrementAsync.fulfilled, (state, action) => {
+        state.count += action.payload.value;
+      })
+      .addCase(decrementAsync.fulfilled, (state, action) => {
+        state.count -= action.payload.value;
+      })
   }
 });
 
-export const { increment, decrement } = counterSlice.actions;
-export default counterSlice.reducer
+export default counterSlice.reducer;
+
